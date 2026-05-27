@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deterministic Approaches to Standards-Compliant Hànyǔ Pīnyīn Transcription</title>
+    <style>
+        :root {
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            line-height: 1.7;
+            color: #333;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            background: #f7f7f7;
+        }
+
+        main.container {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.4rem;
+            margin-top: 3rem;
+        }
+
+        h3 {
+            color: #2980b9;
+            margin-top: 2rem;
+        }
+
+        h4 {
+            color: #2c3e50;
+            margin-top: 2rem;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        ul {
+            line-height: 1.8;
+        }
+
+        .subtitle {
+            color: #555;
+        }
+
+        .author {
+            color: #666;
+            font-style: italic;
+        }
+
+        .abstract {
+            background: #f0f8ff;
+            padding: 1.5rem;
+            border-left: 6px solid #3498db;
+            border-radius: 6px;
+        }
+
+        .conclusion {
+            background: #e8f5e9;
+            padding: 1.5rem;
+            border-radius: 6px;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+        }
+
+        figure {
+            margin: 2rem 0;
+        }
+
+        figure img {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        figcaption {
+            margin-top: 0.6rem;
+            font-size: 0.95rem;
+            color: #666;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+
+    <style>
+        .pipeline-section {
+            margin: 2rem 0;
+        }
+
+        .pipeline-figure {
+            margin: 0;
+        }
+
+        .pipeline {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.45rem;
+            margin: 2rem auto;
+            max-width: 620px;
+        }
+
+        .step {
+            width: 100%;
+            border: 1.5px solid #222;
+            border-radius: 10px;
+            padding: 0.9rem 1.1rem;
+            background: #fafafa;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .step.final {
+            background: #f2f2f2;
+            font-weight: 600;
+        }
+
+        .title {
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+
+        .subtitle {
+            margin-top: 0.35rem;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            color: #555;
+        }
+
+        .mono {
+            font-family: "SFMono-Regular", Consolas, monospace;
+        }
+
+        .step ul {
+            margin: 0.75rem 0 0 1.2rem;
+            padding: 0;
+            text-align: left;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            color: #444;
+        }
+
+        .arrow {
+            font-size: 1.15rem;
+            line-height: 1;
+            color: #444;
+        }
+
+        figcaption {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.92rem;
+            color: #555;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <header>
+            <h1>Deterministic Approaches to Standards-Compliant Hànyǔ Pīnyīn Transcription</h1>
+            <p class="subtitle">Comparative Analysis of Architectures for GB/T 16159-2012-Compliant Hànyǔ Pīnyīn
+                Orthography</p>
+            <p class="subtitle">Research Draft • May 2026</p>
+            <p class="author">Alfons Grabher</p>
+        </header>
+
+        <section class="abstract">
+            <p><strong>Abstract:</strong> Most contemporary Pīnyīn transcription systems prioritize input-method support
+                and pronunciation lookup over orthographic compliance with the official standard <strong>GB/T
+                    16159-2012</strong> (汉语拼音正词法基本规则).</p>
+            <p>This paper analyzes limitations of current approaches—including LLMs, probabilistic segmenters, and
+                character-based libraries—based on extensive transcription experiments with literary and spoken-language
+                materials.</p>
+            <p>It proposes a deterministic architecture centered on lexical segmentation, rich intermediate token
+                representations, layered orthographic transformation rules, and final normalization passes. The approach
+                emphasizes standards compliance, auditability, reproducibility, and human-correctable workflows over
+                probabilistic generation.</p>
+            <p>Publication-grade Pīnyīn orthography is best treated as a deterministic engineering problem rather than a
+                generative task.</p>
+        </section>
+
+        <section>
+            <h2>1. Background and Motivation</h2>
+            <p>The official standard <strong>GB/T 16159-2012</strong> defines orthographic rules essential for
+                publication-grade Pīnyīn used in language-learning materials, subtitles, audiobooks, and digital
+                publishing. Most existing tools, however, focus primarily on pronunciation or input methods.</p>
+            <p>This research originated from large-scale manual transcription projects, including the complete Pīnyīn
+                conversion of a 倪匡 (Ní Kuāng) novel (≈414,000 characters), multi-year iterative normalization, and
+                spoken-language podcast transcription. These efforts exposed persistent gaps in existing systems,
+                particularly in lexical grouping, grammatical attachment, and consistent formatting.</p>
+            <p>The work highlighted the value of transparent, inspectable, and human-correctable transcription
+                interfaces.</p>
+        </section>
+
+        <section>
+            <h2>2. Current Limitations</h2>
+
+            <h3>2.1 Large Language Models (LLMs)</h3>
+            <p>While LLMs can generate plausible Pīnyīn, they frequently fail to meet GB/T 16159-2012 requirements.
+                Common issues include unwanted tone sandhi, inconsistent lexical segmentation, implicit paraphrasing,
+                and stylistic drift in longer texts.</p>
+            <p>These problems stem from the task’s demand for numerous constrained symbolic decisions involving lexical
+                wordhood, grammar, and orthographic consistency.</p>
+
+            <h3>2.2 Traditional Libraries and Segmenters</h3>
+            <p>Most dedicated Pīnyīn libraries are character-oriented rather than truly lexical. Although tools like
+                Jieba and RakutenMA provide useful foundations, they require substantial additional deterministic
+                post-processing to achieve publication-grade quality.</p>
+        </section>
+
+        <section>
+            <h2>3. Architectural Pathways Explored</h2>
+
+            <h3>3.1 POS-Aware Segmentation with Interactive Deterministic Post-Processing</h3>
+            <p>A primary prototype combined RakutenMA segmentation and POS tagging with deterministic orthographic rules
+                and a fully interactive correction interface (token adjustment, Pīnyīn selection, and dictionary
+                lookup). This system was used for the complete transcription of the 倪匡 (Ní Kuāng) novel, as well as many
+                other, shorter texts.</p>
+            <p>Technologies: vanilla JavaScript/HTML/CSS, RakutenMA, CC-CEDICT.</p>
+
+            <figure>
+                <img src="./images/transcription_table_1.jpg" alt="Interactive transcription interface">
+                <figcaption>Figure 1. Interactive transcription interface with real-time editing.</figcaption>
+            </figure>
+            <figure>
+                <img src="./images/transcription_table_2.jpg" alt="Export transcription results">
+                <figcaption>Figure 2. Export functionality for transcription results.</figcaption>
+            </figure>
+        </section>
+
+        <section class="pipeline-section">
+            <h4>Orthographic Transformation Pipeline</h4>
+            <figure class="pipeline-figure">
+                <div class="pipeline">
+
+                    <div class="step">
+                        <div class="title">Chinese Text</div>
+                        <div class="subtitle">Raw Unicode input text</div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">Unicode Normalization</div>
+                        <div class="subtitle">
+                            Full-width conversion · character cleanup
+                        </div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">RakutenMA Segmentation + POS</div>
+                        <div class="subtitle">
+                            Initial tokenization and POS hypothesis
+                        </div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">Deterministic Repair Passes</div>
+                        <div class="subtitle">
+                            POS correction · punctuation normalization · token cleanup
+                        </div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">Intermediate Representation</div>
+                        <div class="subtitle mono">
+                            transcriptionSet
+                        </div>
+
+                        <ul>
+                            <li>Original token</li>
+                            <li>Candidate Pīnyīn readings</li>
+                            <li>Selected transcription</li>
+                            <li>POS metadata</li>
+                            <li>Parent/child references</li>
+                        </ul>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">Hierarchical Lexical Lookup</div>
+                        <div class="subtitle">
+                            Longest-match decomposition · dictionary fallback · grammatical handling
+                        </div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">Deterministic Merge Validator</div>
+                        <div class="subtitle">
+                            POS merge constraints · explicit prohibitions · rule exceptions
+                        </div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">Orthographic Suggestion Layer</div>
+                        <div class="subtitle">
+                            Alternative token groupings · lexical merge candidates · reviewable suggestions
+                        </div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">Reversible Editing Layer</div>
+                        <div class="subtitle">
+                            Merge/split/retranscribe operations with provenance preservation
+                        </div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step">
+                        <div class="title">Final Orthographic Rendering</div>
+                        <div class="subtitle">
+                            Spacing · punctuation · capitalization
+                        </div>
+                    </div>
+
+                    <div class="arrow">↓</div>
+
+                    <div class="step final">
+                        <div class="title">Publication-Grade Pīnyīn Text</div>
+                    </div>
+
+                </div>
+
+                <figcaption>
+                    Multi-stage deterministic orthographic transformation pipeline.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h4>Orthographic Rendering in the Post-Processing Pipeline</h4>
+
+            <p>
+                The rendering pipeline includes a series of ordered orthographic
+                transformation passes:
+            </p>
+
+            <ul>
+                <li>
+                    <code>separateMixedCharOrtho()</code> —
+                    separates mixed-script boundaries between Hanzi and non-Hanzi
+                    character sequences.
+                </li>
+
+                <li>
+                    <code>orthoTimecodes()</code> —
+                    normalizes timestamp and timecode formatting early in the pipeline
+                    to prevent downstream segmentation interference.
+                </li>
+
+                <li>
+                    <code>orthoZheGuo()</code> —
+                    applies deterministic orthographic handling for Rule 6.1.2 regarding “着”, “了” and “过”.
+                </li>
+
+                <li>
+                    <code>orthoLe()</code> —
+                    applies post-selection orthographic normalization for sentence-final
+                    and grammatical 了 (le) usage.
+                </li>
+
+                <li>
+                    <code>orthoBuLiao()</code> —
+                    resolves orthographic treatment of 不 (bù) an 了 (le, liǎo)” constructions
+                    and associated lexical merges.
+                </li>
+
+                <li>
+                    <code>orthoHardSelectPīnyīn()</code> —
+                    performs explicit rule-priority transcription selection for
+                    unresolved or context-sensitive readings.
+                </li>
+
+                <li>
+                    <code>orthoCapitalizeProperNouns()</code> —
+                    applies deterministic capitalization rules for recognized proper
+                    nouns and named entities.
+                </li>
+            </ul>
+        </section>
+
+        <h3>3.2 Segmentation with Deterministic Post-Processing</h3>
+        <p>Another prototype employed Jieba-based segmentation followed by fully deterministic, non-interactive
+            orthographic rendering. This entirely automated workflow, which omitted human correction and review stages,
+            appears potentially suitable for real-time or on-the-fly transcription scenarios. Preliminary experiments
+            suggest that publication-grade output may be achievable within such an architecture, although doing so would
+            likely require substantial additional engineering effort.</p>
+        <p>Technologies: vanilla JavaScript/HTML/CSS, Jieba-JS, Pīnyīn-Pro, CC-CEDICT.</p>
+
+        <figure>
+            <img src="./images/transcription_table_3.jpg" alt="Transcription results">
+            <figcaption>Figure 3. Example transcription output from the Jieba-based prototype.</figcaption>
+        </figure>
+
+        <h3>3.3 Search-Replace Repair of Existing Pīnyīn</h3>
+        <p>A third pathway focused on rule-based normalization of inconsistent podcast transcripts using
+            deterministic search-and-replace patterns. Such transcripts might have been produced by
+            Google translate, manual transcription, or specialised tools.
+            This lightweight pipeline effectively corrected recurring
+            orthographic issues.</p>
+
+        <figure>
+            <img src="./images/transcription_table_4.jpg" alt="Text replacement interface">
+            <figcaption>Figure 4. Text replacement interface for orthographic normalization.</figcaption>
+        </figure>
+        <figure>
+            <img src="./images/transcription_table_5.jpg" alt="Text replacement results">
+            <figcaption>Figure 5. Results after applying deterministic normalization rules.</figcaption>
+        </figure>
+        <figure>
+            <pre>
+doū;dōu
+ zhe;zhe
+ guo;guo
+ le ;le 
+le ma; le ma
+le ba; le ba
+le ne; le ne
+le ya; le ya
+le |; le |
+zhījiān;zhī jiān
+zhīhòu;zhī hòu
+zhīqián;zhī qián
+zàiyīqǐ;zài yīqǐ
+shénmeshíhou;shénme shíhou
+yějiùshì;yě jiùshì
+gǎnxìngqù;gǎn xìngqù
+yǒuméiyǒu;yǒu méiyǒu
+nàzhǒng;nà zhǒng
+zhèzhǒng;zhè zhǒng
+yīzhǒng;yī zhǒng
+Yīzhǒng;Yī zhǒng
+                </pre>
+
+            <figcaption>
+                Figure 6. Examples of text search-replace orthographic normalization
+                rules.
+            </figcaption>
+        </figure>
+        </section>
+
+        <section>
+            <h2>4. Limitations and Future Work</h2>
+            <p>This study is exploratory and relies primarily on qualitative evaluation of literary prose and spoken
+                transcripts. It lacks large-scale quantitative benchmarks and formal inter-annotator measures.</p>
+            <p>Future work should include standardized GB/T 16159-2012 benchmark corpora and systematic comparisons
+                between deterministic and probabilistic systems.</p>
+        </section>
+
+        <section class="conclusion">
+            <h2>Conclusion</h2>
+            <p>Standards-compliant Hànyǔ Pīnyīn transcription remains underdeveloped. Publication-grade results require
+                reliable lexical, grammatical, and orthographic modeling beyond simple phonological conversion.</p>
+            <p>Deterministic architectures with rich intermediate representations and human-correctable workflows
+                currently offer the strongest practical path.</p>
+            <p>
+                The workflows developed during this study additionally produced
+                several thousand manually corrected sentence-level
+                transcriptions aligned with GB/T 16159-2012 conventions.
+                Although limited in scope, such carefully verified orthographic
+                reference material may provide a useful foundation for future
+                benchmarking, regression testing, and reproducible
+                standards-compliant Pīnyīn generation.
+            </p>
+        </section>
+
+        <footer>
+            <p>Draft manuscript — May 2026</p>
+            <p>Referenced resources:
+                <a href="https://github.com/rakuten-nlp/rakutenma" target="_blank">RakutenMA</a> ·
+                <a href="https://github.com/hermanschaaf/jieba-js" target="_blank">Jieba-JS</a> ·
+                <a href="https://github.com/zh-lx/Pīnyīn-pro" target="_blank">Pīnyīn-Pro</a> ·
+                <a href="https://cc-cedict.org/" target="_blank">CC-CEDICT</a>
+            </p>
+        </footer>
+    </main>
+</body>
+
+</html>
