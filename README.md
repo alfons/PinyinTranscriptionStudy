@@ -36,7 +36,7 @@ Prototype interface for deterministic transcription review, token correction, le
 
 ## Project Page
 
-The main research draft and architectural overview are available via GitHub Pages.
+[GitHub Pages](https://alfons.github.io/PinyinTranscriptionStudy/)
 
 ## Status
 
