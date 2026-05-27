@@ -211,18 +211,11 @@
         </header>
 
         <section class="abstract">
-            <p><strong>Abstract:</strong> Most contemporary Pīnyīn transcription systems prioritize input-method support
-                and pronunciation lookup over orthographic compliance with the official standard <strong>GB/T
-                    16159-2012</strong> (汉语拼音正词法基本规则).</p>
-            <p>This paper analyzes limitations of current approaches—including LLMs, probabilistic segmenters, and
-                character-based libraries—based on extensive transcription experiments with literary and spoken-language
-                materials.</p>
-            <p>It proposes a deterministic architecture centered on lexical segmentation, rich intermediate token
-                representations, layered orthographic transformation rules, and final normalization passes. The approach
-                emphasizes standards compliance, auditability, reproducibility, and human-correctable workflows over
-                probabilistic generation.</p>
-            <p>Publication-grade Pīnyīn orthography is best treated as a deterministic engineering problem rather than a
-                generative task.</p>
+<p><strong>Abstract:</strong> Most existing Hànyǔ Pīnyīn transcription systems are designed primarily for pronunciation lookup or input methods rather than strict compliance with the orthographic standard <strong>GB/T 16159-2012</strong> (《汉语拼音正词法基本规则》). In practice, publication-grade Pīnyīn requires numerous lexical, grammatical, and formatting decisions that are not reliably handled by current tools.</p>
+
+<p>Extensive experiments with literary prose and spoken-language materials showed that existing LLM-based and probabilistic approaches were unable to produce consistently reliable GB/T 16159-2012-compliant transcription for long-form texts. This led to the development of deterministic transcription workflows centered on lexical segmentation, explicit orthographic rules, and human-correctable intermediate representations. The workflows additionally produced several thousand manually corrected sentence-level transcriptions aligned with GB/T 16159-2012 conventions, potentially providing useful material for future benchmarking and evaluation.</p>
+
+<p>The paper argues that publication-grade Pīnyīn transcription is best approached as a constrained orthographic engineering problem rather than a purely generative language task.</p>
         </section>
 
         <section>
